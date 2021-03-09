@@ -1,0 +1,55 @@
+#!/usr/bin/env sh
+
+# Simple script to apply patches
+# to simple terminal source code
+
+
+### Script configuration goes here:
+# Exit on first fail
+set -e
+# Patches directory
+PATCHES="$PWD/patches";
+###
+
+if [ "$1" == "-h" ] || [ "$1" == "--help" ] ; then
+    cat << EOF
+usage: $0 [--revert] [-h|--help]
+
+Simple script ro apply patches
+to simple terminal source code
+
+Just run this script to apply
+patches for patches dir of repo
+
+Flags:
+    -h|--help    Print help message and exit
+    --revert     Revert applied patches
+
+The author of the program, as always,
+bears no responsibility.
+
+EOF
+    exit 0;
+fi
+
+if [ ! -e "$PATCHES" ] ; then
+   echo "Directory with patches $PATCHES not found, exiting...";
+   exit 1;
+fi
+
+if [ "$1" == "--revert" ] ; then
+    for patch in $(ls "$PATCHES"); do
+        echo "Reverting $patch...";
+	patch -R < $PATCHES/$patch;
+    done
+    echo "All patches successfully reverted";
+    exit 0;
+fi
+
+for patch in $(ls "$PATCHES"); do
+    echo "Applying $patch...";
+    patch < $PATCHES/$patch;
+done
+
+echo "All patches successfully applied";
+exit 0;
